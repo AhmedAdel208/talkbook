@@ -3,18 +3,22 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-// import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from "@clerk/nextjs";
+import {
+  SignInButton,
+  UserButton,
+  useUser,
+} from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { label: "Library", href: "/" },
-  { label: "Add New", href: "/books/new" },
+  { label: "Add New", href: "/newbook-file" },
   { label: "Pricing", href: "/subscriptions" },
 ];
 
 const Navbar = () => {
   const pathName = usePathname();
-  // const { user } = useUser();
+  const { user, isSignedIn } = useUser();
 
   return (
     <header className="w-full fixed z-50 bg-(--bg-primary)">
@@ -43,21 +47,21 @@ const Navbar = () => {
             );
           })}
 
-          {/* <div className="flex gap-7.5 items-center">
-                        <SignedOut>
-                            <SignInButton mode="modal" />
-                        </SignedOut>
-                        <SignedIn>
-                            <div className="nav-user-link">
-                                <UserButton />
-                                {user?.firstName && (
-                                    <Link href="/subscriptions" className="nav-user-name">
-                                        {user.firstName}
-                                    </Link>
-                                )}
-                            </div>
-                        </SignedIn>
-                    </div> */}
+          <div className="flex gap-7.5 items-center">
+            {!isSignedIn && (
+              <SignInButton mode="modal" />
+            )}
+            {isSignedIn && (
+              <div className="nav-user-link">
+                <UserButton />
+                {user?.firstName && (
+                  <Link href="/subscriptions" className="nav-user-name">
+                    {user.firstName}
+                  </Link>
+                )}
+              </div>
+            )}
+          </div>
         </nav>
       </div>
     </header>
