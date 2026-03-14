@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { label: "Library", href: "/" },
-  { label: "Add New", href: "/newbook-file" },
+  { label: "Add New", href: "/new-book" },
   { label: "Pricing", href: "/subscriptions" },
 ];
 

@@ -10,9 +10,9 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ACCEPTED_PDF_TYPES, ACCEPTED_IMAGE_TYPES, DEFAULT_VOICE } from '@/lib/constants';
-import FileUploader from './FileUploader';
-import VoiceSelector from './VoiceSelector';
-import LoadingOverlay from './LoadingOverlay';
+import FileUploader from '@/components/FileUploader';
+import VoiceSelector from '@/components/VoiceSelector';
+import LoadingOverlay from '@/components/LoadingOverlay';
 import {useAuth, useUser} from "@clerk/nextjs";
 import { toast } from 'sonner';
 import {checkBookExists, createBook, saveBookSegments} from "@/lib/actions/book.actions";
