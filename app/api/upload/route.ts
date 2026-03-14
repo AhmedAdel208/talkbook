@@ -1,46 +1,46 @@
-import { handleUpload, type HandleUploadBody } from '@vercel/blob/client';
-import { NextResponse } from 'next/server';
+import {NextResponse} from "next/server";
+import {handleUpload, HandleUploadBody} from "@vercel/blob/client";
+import {auth} from "@clerk/nextjs/server";
+import {MAX_FILE_SIZE} from "@/lib/constants";
 
 export async function POST(request: Request): Promise<NextResponse> {
-  const body = (await request.json()) as HandleUploadBody;
+    try {
+        const body = (await request.json()) as HandleUploadBody;
 
-  try {
-    const jsonResponse = await handleUpload({
-      body,
-      request,
-      onBeforeGenerateToken: async (
-        pathname,
-        /* clientPayload */
-      ) => {
-        // Generate a client token for the browser to upload the file
-        // ⚠️ Check for user authentication before generating a token
-        return {
-          allowedContentTypes: ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'],
-          tokenPayload: JSON.stringify({
-            // optional, sent to your server on upload completion
-            // user: user.id,
-          }),
-        };
-      },
-      onUploadCompleted: async ({ blob, tokenPayload }) => {
-        // Get notified of client upload completion
-        // ⚠️ This will be executed on your server, not in the browser
-        console.log('blob upload completed', blob, tokenPayload);
+        const jsonResponse = await handleUpload({
+            token: process.env.bookified_READ_WRITE_TOKEN,
+            body,
+            request,
+            onBeforeGenerateToken: async () => {
+                const { userId } = await auth();
 
-        try {
-          //   const { user } = JSON.parse(tokenPayload);
-          //   await db.update({ userId: user.id, avatar: blob.url });
-        } catch (error) {
-          throw new Error('Could not update user');
-        }
-      },
-    });
+                if(!userId) {
+                    throw new Error('Unauthorized: User not authenticated');
+                }
 
-    return NextResponse.json(jsonResponse);
-  } catch (error) {
-    return NextResponse.json(
-      { error: (error as Error).message },
-      { status: 400 }, // The client will also get this error
-    );
-  }
+                return {
+                    allowedContentTypes: ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'],
+                    addRandomSuffix: true,
+                    maximumSizeInBytes: MAX_FILE_SIZE,
+                    tokenPayload: JSON.stringify({ userId })
+                }
+        } ,
+            onUploadCompleted: async ({ blob, tokenPayload }) => {
+                console.log('File uploaded to blob: ', blob.url)
+
+                const payload = tokenPayload ? JSON.parse(tokenPayload): null
+                const userId = payload?.userId;
+
+                // TODO: PostHog
+            }
+        });
+
+        return NextResponse.json(jsonResponse)
+    } catch (e) {
+        const message = e instanceof Error ? e.message : "An unknown error occurred";
+        const status = message.includes('Unauthorized') ? 401 : 500;
+        console.error('Upload error', e);
+        const clientMessage = status === 401 ? 'Unauthorized' : 'Upload failed';
+        return NextResponse.json({ error: clientMessage }, { status });
+    }
 }
