@@ -50,119 +50,84 @@
 :root {
   --radius: 0.625rem;
 
-  /* Warm Literary Backgrounds */
-  --bg-primary: #f8f4e9;
-  --bg-secondary: #f3e4c7;
-  --bg-tertiary: #fff6e5;
-  --bg-card: #ffffff;
+  /* Sleek Modern Dark Backgrounds - Impress Employers with Premium Aesthetics */
+  --bg-primary: #0B0E14; /* Deep space navy */
+  --bg-secondary: #151A24; /* Slightly lighter space navy */
+  --bg-tertiary: #1E2532; /* Soft muted navy */
+  --bg-card: rgba(21, 26, 36, 0.7); /* Glassmorphic card */
 
-  /* Warm Text Colors */
-  --text-primary: #212a3b;
-  --text-secondary: #3d485e;
-  --text-muted: #222c37;
+  /* Text Colors suitable for dark mode */
+  --text-primary: #F8FAFC; 
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
 
-  /* Warm Accent */
-  --accent-warm: #212a3b;
-  --accent-warm-hover: #3d485e;
-  --accent-light: #fff6e5;
+  /* Modern Accents - Indigo / Purple gradients */
+  --accent-warm: #6366F1; /* Primary Indigo */
+  --accent-warm-hover: #4F46E5;
+  --accent-light: rgba(99, 102, 241, 0.1); 
 
   /* Semantic Colors */
-  --success: #7c9a82;
-  --warning: #d4a853;
+  --success: #10B981;
+  --warning: #F59E0B;
 
-  /* Borders */
-  --border-subtle: rgba(33, 42, 59, 0.12);
-  --border-medium: rgba(33, 42, 59, 0.2);
+  /* Borders - Subtle glass boundaries */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-medium: rgba(255, 255, 255, 0.15);
 
-  /* Soft Shadows */
-  --shadow-soft-sm:
-    0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06);
-  --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.08);
-  --shadow-soft-md:
-    0 2px 4px rgba(0, 0, 0, 0.04), 0 8px 16px rgba(0, 0, 0, 0.08);
-  --shadow-soft-lg:
-    0 4px 12px rgba(0, 0, 0, 0.08), 0 16px 32px rgba(0, 0, 0, 0.12);
-  --shadow-book: 0px 10px 30px 0px rgba(0, 0, 0, 0.1);
+  /* Premium Glowing Shadows */
+  --shadow-soft-sm: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+  --shadow-soft: 0 10px 30px -4px rgba(0, 0, 0, 0.5);
+  --shadow-soft-md: 0 15px 40px -5px rgba(0, 0, 0, 0.6);
+  --shadow-soft-lg: 0 20px 50px -10px rgba(0, 0, 0, 0.7);
+  --shadow-book: 0px 20px 40px rgba(0, 0, 0, 0.8), 0px 0px 20px rgba(99, 102, 241, 0.2);
 
-  /* Base theme colors */
-  --background: #f8f4e9;
-  --foreground: #212a3b;
-  --card: #ffffff;
-  --card-foreground: #212a3b;
-  --popover: #ffffff;
-  --popover-foreground: #212a3b;
-  --primary: #212a3b;
-  --primary-foreground: #ffffff;
-  --secondary: #f3e4c7;
-  --secondary-foreground: #212a3b;
-  --muted: #f3e4c7;
-  --muted-foreground: #3d485e;
-  --accent: #fff6e5;
-  --accent-foreground: #212a3b;
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: rgba(33, 42, 59, 0.12);
-  --input: rgba(33, 42, 59, 0.12);
-  --ring: #212a3b;
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: #ffffff;
-  --sidebar-foreground: #212a3b;
-  --sidebar-primary: #212a3b;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f3e4c7;
-  --sidebar-accent-foreground: #212a3b;
-  --sidebar-border: rgba(33, 42, 59, 0.12);
-  --sidebar-ring: #212a3b;
+  /* Built-in UI Theme override for dark mode */
+  --background: #0B0E14;
+  --foreground: #F8FAFC;
+  --card: #151A24;
+  --card-foreground: #F8FAFC;
+  --popover: #151A24;
+  --popover-foreground: #F8FAFC;
+  --primary: #6366F1;
+  --primary-foreground: #FFFFFF;
+  --secondary: #1E2532;
+  --secondary-foreground: #F8FAFC;
+  --muted: #1E2532;
+  --muted-foreground: #94A3B8;
+  --accent: #2A3143;
+  --accent-foreground: #F8FAFC;
+  --destructive: #EF4444;
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.08);
+  --ring: #6366F1;
+  
+  --sidebar: #151A24;
+  --sidebar-foreground: #F8FAFC;
+  --sidebar-primary: #6366F1;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #1E2532;
+  --sidebar-accent-foreground: #F8FAFC;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-ring: #6366F1;
 
-  /* Brand color */
-  --blue: #212a3b;
-
-  /* Brand accent (warm brown) - for active states and CTAs */
-  --color-brand: #663820;
-  --color-brand-hover: #7a4528;
+  /* Brand Colors */
+  --blue: #3B82F6;
+  --color-brand: #6366F1; 
+  --color-brand-hover: #4F46E5;
 
   /* Layout dimensions */
   --navbar-height: 74px;
 }
 
 .dark {
-  --background: #1a1918;
-  --foreground: #f7f4ee;
-  --card: #252321;
-  --card-foreground: #f7f4ee;
-  --popover: #252321;
-  --popover-foreground: #f7f4ee;
-  --primary: #f7f4ee;
-  --primary-foreground: #1a1918;
-  --secondary: #2d2a26;
-  --secondary-foreground: #f7f4ee;
-  --muted: #2d2a26;
-  --muted-foreground: #8a847a;
-  --accent: #2d2a26;
-  --accent-foreground: #f7f4ee;
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: rgba(247, 244, 238, 0.1);
-  --input: rgba(247, 244, 238, 0.15);
-  --ring: #c8553d;
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: #252321;
-  --sidebar-foreground: #f7f4ee;
-  --sidebar-primary: #c8553d;
-  --sidebar-primary-foreground: #f7f4ee;
-  --sidebar-accent: #2d2a26;
-  --sidebar-accent-foreground: #f7f4ee;
-  --sidebar-border: rgba(247, 244, 238, 0.1);
-  --sidebar-ring: #c8553d;
-
-  /* Brand color - terracotta */
-  --blue: #c8553d;
+  /* Inherit directly from root as root is already premium dark */
+  --background: #0B0E14;
+  --foreground: #F8FAFC;
+  --card: #151A24;
+  --card-foreground: #F8FAFC;
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.08);
+  --ring: #6366F1;
 }
 
 @layer base {
