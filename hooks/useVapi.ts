@@ -57,6 +57,18 @@ export function useVapi(book: IBook) {
     const sessionIdRef = useRef<string | null>(null);
     const isStoppingRef = useRef(false);
 
+    // Suppress Krisp WASM processor errors on browsers without SIMD support
+    useEffect(() => {
+        const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+            if (event.reason && event.reason.toString().includes('WASM_OR_WORKER_NOT_READY')) {
+                console.warn('Suppressed Krisp WASM error:', event.reason);
+                event.preventDefault(); // Prevents the error from bubble up to Next.js overlay
+            }
+        };
+        window.addEventListener('unhandledrejection', handleUnhandledRejection);
+        return () => window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+    }, []);
+
     // Keep refs in sync with latest values for use in callbacks
     const maxDurationSeconds = limits?.maxDurationPerSession ? limits.maxDurationPerSession * 60 : (15 * 60);
     const maxDurationRef = useLatestRef(maxDurationSeconds);
