@@ -6,9 +6,17 @@ import { TrendingUp, ArrowRight } from 'lucide-react';
 
 const FeaturedBooks = async () => {
     const results = await getAllBooks();
+    
+    if (!results.success) {
+        console.error("FeaturedBooks: Failed to fetch books", results.error);
+    }
+
     const books = results.success ? (results.data?.slice(0, 4) ?? []) : [];
 
-    if (books.length === 0) return null;
+    if (books.length === 0) {
+        console.warn("FeaturedBooks: No books found in database");
+        return null;
+    }
 
     return (
         <section className="max-w-7xl mx-auto px-5 mb-24 relative">
