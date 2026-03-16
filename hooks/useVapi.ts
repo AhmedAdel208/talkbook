@@ -27,11 +27,12 @@ const TIMER_INTERVAL_MS = 1000;
 const SECONDS_PER_MINUTE = 60;
 const TIME_WARNING_THRESHOLD = 60; // Show warning when this many seconds remain
 
-let vapi: InstanceType<typeof Vapi>;
+let vapi: InstanceType<typeof Vapi> | null = null;
 function getVapi() {
     if (!vapi) {
         if (!VAPI_API_KEY) {
-            throw new Error('NEXT_PUBLIC_VAPI_API_KEY environment variable is not set');
+            console.warn('NEXT_PUBLIC_VAPI_API_KEY environment variable is not set');
+            return null;
         }
         vapi = new Vapi(VAPI_API_KEY);
     }
@@ -77,6 +78,9 @@ export function useVapi(book: IBook) {
 
     // Set up Vapi event listeners
     useEffect(() => {
+        const vapiInstance = getVapi();
+        if (!vapiInstance) return;
+
         const handlers = {
             'call-start': () => {
                 isStoppingRef.current = false;
@@ -94,7 +98,7 @@ export function useVapi(book: IBook) {
 
                         // Check duration limit
                         if (newDuration >= maxDurationRef.current) {
-                            getVapi().stop();
+                            getVapi()?.stop();
                             setLimitError(
                                 `Session time limit (${Math.floor(
                                     maxDurationRef.current / SECONDS_PER_MINUTE,
@@ -219,13 +223,13 @@ export function useVapi(book: IBook) {
 
         // Register all handlers
         Object.entries(handlers).forEach(([event, handler]) => {
-            getVapi().on(event as keyof typeof handlers, handler as () => void);
+            vapiInstance.on(event as keyof typeof handlers, handler as () => void);
         });
 
         return () => {
             // End active session on unmount
             if (sessionIdRef.current) {
-                getVapi().stop();
+                vapiInstance.stop();
                 endVoiceSession(sessionIdRef.current, durationRef.current).catch((err) =>
                     console.error('Failed to end voice session on unmount:', err),
                 );
@@ -233,7 +237,7 @@ export function useVapi(book: IBook) {
             }
             // Cleanup handlers
             Object.entries(handlers).forEach(([event, handler]) => {
-                getVapi().off(event as keyof typeof handlers, handler as () => void);
+                vapiInstance.off(event as keyof typeof handlers, handler as () => void);
             });
             if (timerRef.current) clearInterval(timerRef.current);
         };
@@ -265,8 +269,14 @@ export function useVapi(book: IBook) {
             // The actual limit is enforced by useLatestRef(limits.maxSessionMinutes * 60)
 
             const firstMessage = `Hey, good to meet you. Quick question before we dive in - have you actually read ${book.title} yet, or are we starting fresh?`;
+            const vapiInstance = getVapi();
+            if (!vapiInstance) {
+                setLimitError('Voice service is not available. Please check configuration.');
+                setStatus('idle');
+                return;
+            }
 
-            await getVapi().start(ASSISTANT_ID, {
+            await vapiInstance.start(ASSISTANT_ID, {
                 firstMessage,
                 variableValues: {
                     title: book.title,
@@ -292,7 +302,7 @@ export function useVapi(book: IBook) {
 
     const stop = useCallback(() => {
         isStoppingRef.current = true;
-        getVapi().stop();
+        getVapi()?.stop();
     }, []);
 
     const clearError = useCallback(() => {

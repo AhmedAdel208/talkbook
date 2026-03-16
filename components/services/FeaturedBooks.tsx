@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { getAllBooks } from '@/lib/actions/book.actions';
 import BookCard from '@/components/BookCard';
 import Link from 'next/link';
@@ -12,6 +12,7 @@ const FeaturedBooks = async () => {
     }
 
     const books = results.success ? (results.data?.slice(0, 4) ?? []) : [];
+    console.log(books)
 
     if (books.length === 0) {
         console.warn("FeaturedBooks: No books found in database");

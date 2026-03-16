@@ -3,7 +3,6 @@
 import {Mic, MicOff} from "lucide-react";
 import useVapi from "@/hooks/useVapi";
 import {IBook} from "@/types";
-import Image from "next/image";
 import Transcript from "./Transcript";
 import {toast} from "sonner";
 import {useRouter} from "next/navigation";
@@ -50,13 +49,12 @@ const VapiControls = ({ book }: { book: IBook }) => {
                 {/* Header Card */}
                 <div className="vapi-header-card">
                     <div className="vapi-cover-wrapper">
-                        <Image
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
                             src={book.coverURL || "/assets/default-cover.png"}
                             alt={book.title}
-                            width={120}
-                            height={180}
-                            className="vapi-cover-image w-[120px]! h-auto!"
-                            priority
+                            className="vapi-cover-image w-[120px]! h-auto! rounded-xl"
+                            onError={(e) => { (e.target as HTMLImageElement).src = "/assets/default-cover.png"; }}
                         />
                         <div className="vapi-mic-wrapper relative">
                             {isActive && (status === 'speaking' || status === 'thinking') && (

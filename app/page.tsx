@@ -5,6 +5,8 @@ import { ArrowRight, BookOpen, Clock, Star } from "lucide-react";
 import LandingFooter from "@/components/services/LandingFooter";
 import FeaturedBooks from "@/components/services/FeaturedBooks";
 
+export const dynamic = 'force-dynamic';
+
 export default function Home() {
     return (
         <main className="w-full min-h-screen bg-background text-foreground pt-[94px] overflow-hidden transition-colors duration-300">
