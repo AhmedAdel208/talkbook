@@ -232,3 +232,60 @@ export const searchBookSegments = async (bookId: string, query: string, limit: n
         };
     }
 };
+
+export const getUserBooks = async (clerkId: string) => {
+    try {
+        await connectToDatabase();
+
+        const books = await Book.find({ clerkId }).sort({ createdAt: -1 }).lean();
+
+        return {
+            success: true,
+            data: serializeData(books)
+        }
+    } catch (e) {
+        console.error('Error fetching user books', e);
+        return {
+            success: false, error: e
+        }
+    }
+}
+
+export const deleteBook = async (bookId: string, clerkId: string) => {
+    try {
+        await connectToDatabase();
+
+        const book = await Book.findOne({ _id: bookId, clerkId }).lean();
+        
+        if (!book) {
+            return {
+                success: false,
+                error: "Book not found or unauthorized to delete"
+            }
+        }
+
+        // Delete the book
+        await Book.findByIdAndDelete(bookId);
+
+        // Delete all associated text segments
+        await BookSegment.deleteMany({ bookId });
+
+        // Optional: Next/Cache revalidate
+        const { revalidatePath } = await import("next/cache");
+        revalidatePath("/library");
+        revalidatePath("/my-books");
+        revalidatePath("/");
+
+        // Note: Currently we are not physically deleting the PDF/Cover files from Vercel Blob here 
+        // to simplify this step, but in production you'd want to call `del(book.fileBlobKey)` from @vercel/blob.
+        
+        return {
+            success: true,
+        }
+    } catch (e) {
+        console.error('Error deleting book', e);
+        return {
+            success: false, error: e
+        }
+    }
+}
