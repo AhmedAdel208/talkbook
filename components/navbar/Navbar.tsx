@@ -10,7 +10,7 @@ import {
 } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { LibraryBig } from "lucide-react";
+import { BookMarked } from "lucide-react";
 
 const navItems = [
   { label: "Home", href: "/" },
@@ -38,7 +38,7 @@ const Navbar = () => {
               className="relative group p-2 rounded-full hover:bg-muted transition-colors flex items-center justify-center mt-0.5"
               aria-label="My Books"
             >
-              <LibraryBig className="w-5 h-5 text-muted-foreground group-hover:text-indigo-500 transition-colors" />
+              <BookMarked className="w-5 h-5 text-muted-foreground group-hover:text-indigo-500 transition-colors" />
               <span className="absolute -bottom-8 bg-black dark:bg-white text-white dark:text-black text-xs font-bold px-2.5 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-all scale-95 group-hover:scale-100 whitespace-nowrap pointer-events-none z-50">
                 My Books
               </span>

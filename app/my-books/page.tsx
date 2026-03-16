@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getUserBooks } from "@/lib/actions/book.actions";
 import MyBookCard from "@/components/MyBookCard";
 import React from "react";
-import { LibraryBig, Plus } from "lucide-react";
+import { BookMarked, Plus } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -43,7 +43,7 @@ export default async function MyBooksPage() {
                 <div className="space-y-3 relative z-10">
                     <div className="flex items-center gap-3">
                         <div className="p-3 bg-indigo-500/10 dark:bg-indigo-500/20 rounded-xl text-indigo-600 dark:text-indigo-400">
-                            <LibraryBig className="w-8 h-8" />
+                            <BookMarked className="w-8 h-8" />
                         </div>
                         <h1 className="text-4xl md:text-5xl font-extrabold text-foreground tracking-tight">
                             My <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500">Books</span>
@@ -81,7 +81,7 @@ export default async function MyBooksPage() {
             ) : (
                 <div className="flex flex-col items-center justify-center py-20 bg-card/30 rounded-3xl border border-dashed border-border text-center">
                     <div className="p-6 bg-secondary/50 rounded-full mb-6">
-                        <LibraryBig className="w-12 h-12 text-muted-foreground" />
+                        <BookMarked className="w-12 h-12 text-muted-foreground" />
                     </div>
                     <h2 className="text-2xl font-bold text-foreground mb-2">No books found in your library</h2>
                     <p className="text-muted-foreground mb-8 max-w-md">
