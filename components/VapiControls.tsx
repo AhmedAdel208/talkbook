@@ -7,12 +7,11 @@ import Image from "next/image";
 import Transcript from "./Transcript";
 import {toast} from "sonner";
 import {useRouter} from "next/navigation";
-import { useState, useEffect } from "react";
+import {useEffect} from "react";
 
 const VapiControls = ({ book }: { book: IBook }) => {
     const { status, isActive, messages, currentMessage, currentUserMessage, duration, start, stop, clearError, limitError, isBillingError, maxDurationSeconds } = useVapi(book)
     const router = useRouter();
-    const [imgSrc, setImgSrc] = useState(book.coverURL || "/assets/default-cover.png");
 
     useEffect(() => {
         if (limitError) {
@@ -52,13 +51,12 @@ const VapiControls = ({ book }: { book: IBook }) => {
                 <div className="vapi-header-card">
                     <div className="vapi-cover-wrapper">
                         <Image
-                            src={imgSrc}
+                            src={book.coverURL || "/assets/default-cover.png"}
                             alt={book.title}
                             width={120}
                             height={180}
                             className="vapi-cover-image w-[120px]! h-auto!"
                             priority
-                            onError={() => setImgSrc("/assets/default-cover.png")}
                         />
                         <div className="vapi-mic-wrapper relative">
                             {isActive && (status === 'speaking' || status === 'thinking') && (
