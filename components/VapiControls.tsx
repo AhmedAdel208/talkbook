@@ -7,11 +7,12 @@ import Image from "next/image";
 import Transcript from "./Transcript";
 import {toast} from "sonner";
 import {useRouter} from "next/navigation";
-import {useEffect} from "react";
+import { useState, useEffect } from "react";
 
 const VapiControls = ({ book }: { book: IBook }) => {
     const { status, isActive, messages, currentMessage, currentUserMessage, duration, start, stop, clearError, limitError, isBillingError, maxDurationSeconds } = useVapi(book)
     const router = useRouter();
+    const [imgSrc, setImgSrc] = useState(book.coverURL || "/assets/default-cover.png");
 
     useEffect(() => {
         if (limitError) {
@@ -51,12 +52,13 @@ const VapiControls = ({ book }: { book: IBook }) => {
                 <div className="vapi-header-card">
                     <div className="vapi-cover-wrapper">
                         <Image
-                            src={book.coverURL || "/images/book-placeholder.png"}
+                            src={imgSrc}
                             alt={book.title}
                             width={120}
                             height={180}
                             className="vapi-cover-image w-[120px]! h-auto!"
                             priority
+                            onError={() => setImgSrc("/assets/default-cover.png")}
                         />
                         <div className="vapi-mic-wrapper relative">
                             {isActive && (status === 'speaking' || status === 'thinking') && (
@@ -70,7 +72,7 @@ const VapiControls = ({ book }: { book: IBook }) => {
                                 {isActive ? (
                                     <Mic className="size-7 text-white" />
                                 ) : (
-                                    <MicOff className="size-7 text-[#212a3b]" />
+                                    <MicOff className="size-7 text-foreground" />
                                 )}
                             </button>
                         </div>
@@ -78,10 +80,10 @@ const VapiControls = ({ book }: { book: IBook }) => {
 
                     <div className="flex flex-col gap-4 flex-1">
                         <div>
-                            <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#212a3b] mb-1">
+                            <h1 className="text-2xl sm:text-3xl font-bold font-serif text-foreground mb-1">
                                 {book.title}
                             </h1>
-                            <p className="text-[#3d485e] font-medium">by {book.author}</p>
+                            <p className="text-muted-foreground font-medium">by {book.author}</p>
                         </div>
 
                         <div className="flex flex-wrap gap-3">

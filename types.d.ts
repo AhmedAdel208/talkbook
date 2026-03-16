@@ -20,6 +20,7 @@ export interface IBook extends Document {
     fileBlobKey: string;
     coverURL: string;
     coverBlobKey?: string;
+    category?: string;
     fileSize: number;
     totalSegments: number;
     createdAt: Date;
@@ -64,6 +65,7 @@ export interface CreateBook {
     fileBlobKey: string;
     coverURL?: string;
     coverBlobKey?: string;
+    category?: string;
     fileSize: number;
 }
 

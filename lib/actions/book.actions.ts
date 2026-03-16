@@ -21,6 +21,7 @@ export const getAllBooks = async (search?: string) => {
                 $or: [
                     { title: { $regex: regex } },
                     { author: { $regex: regex } },
+                    { category: { $regex: regex } },
                 ]
             };
         }

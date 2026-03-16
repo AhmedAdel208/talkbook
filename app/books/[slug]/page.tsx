@@ -29,8 +29,8 @@ export default async function BookDetailsPage({
 
   return (
     <div className="book-page-container">
-      <Link href="/" className="back-btn-floating">
-        <ArrowLeft className="size-6 text-[#212a3b]" />
+      <Link href="/library" className="back-btn-floating">
+        <ArrowLeft className="size-6 text-foreground" />
       </Link>
 
       <VapiControls book={book} />

@@ -13,6 +13,7 @@ import { ACCEPTED_PDF_TYPES, ACCEPTED_IMAGE_TYPES, DEFAULT_VOICE } from '@/lib/c
 import FileUploader from '@/components/FileUploader';
 import VoiceSelector from '@/components/VoiceSelector';
 import LoadingOverlay from '@/components/LoadingOverlay';
+import CustomFormField from '@/components/CustomFormField';
 import {useAuth, useUser} from "@clerk/nextjs";
 import { toast } from 'sonner';
 import {checkBookExists, createBook, saveBookSegments} from "@/lib/actions/book.actions";
@@ -36,6 +37,7 @@ const UploadForm = () => {
             title: '',
             author: '',
             persona: '',
+            category: '',
             pdfFile: undefined,
             coverImage: undefined,
         },
@@ -103,6 +105,7 @@ const UploadForm = () => {
                 title: data.title,
                 author: data.author,
                 persona: data.persona,
+                category: data.category,
                 fileURL: uploadedPdfBlob.url,
                 fileBlobKey: uploadedPdfBlob.pathname,
                 coverURL: coverUrl,
@@ -176,46 +179,33 @@ const UploadForm = () => {
                         />
 
                         {/* 3. Title Input */}
-                        <FormField
+                        <CustomFormField
                             control={form.control}
                             name="title"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="form-label">Title</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            className="form-input"
-                                            placeholder="ex: Rich Dad Poor Dad"
-                                            {...field}
-                                            disabled={isSubmitting}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
+                            label="Title"
+                            placeholder="ex: Rich Dad Poor Dad"
+                            disabled={isSubmitting}
                         />
 
                         {/* 4. Author Input */}
-                        <FormField
+                        <CustomFormField
                             control={form.control}
                             name="author"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="form-label">Author Name</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            className="form-input"
-                                            placeholder="ex: Robert Kiyosaki"
-                                            {...field}
-                                            disabled={isSubmitting}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
+                            label="Author Name"
+                            placeholder="ex: Robert Kiyosaki"
+                            disabled={isSubmitting}
                         />
 
-                        {/* 5. Voice Selector */}
+                        {/* 5. Category Input */}
+                        <CustomFormField
+                            control={form.control}
+                            name="category"
+                            label="Category"
+                            placeholder="ex: Tech, Finance, Productivity"
+                            disabled={isSubmitting}
+                        />
+
+                        {/* 6. Voice Selector */}
                         <FormField
                             control={form.control}
                             name="persona"
@@ -234,7 +224,7 @@ const UploadForm = () => {
                             )}
                         />
 
-                        {/* 6. Submit Button */}
+                        {/* 7. Submit Button */}
                         <Button type="submit" className="form-btn" disabled={isSubmitting}>
                             Begin Synthesis
                         </Button>
