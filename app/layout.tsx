@@ -35,7 +35,7 @@ export default function RootLayout({
     <ClerkProvider>
         <html lang="en" suppressHydrationWarning>
           <body
-            className={`${ibmPlexSerif.variable} ${monaSans.variable} relative font-sans antialiased bg-background text-foreground`}
+            className={`${ibmPlexSerif.variable} ${monaSans.variable} relative font-sans antialiased bg-background custom-scroll text-foreground`}
           >
             <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
               <GlobalErrorSuppressor />

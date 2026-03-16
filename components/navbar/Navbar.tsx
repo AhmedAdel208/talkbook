@@ -29,13 +29,14 @@ const Navbar = () => {
         {/* Left Side: Logo + Icon */}
         <div className="flex items-center gap-4 md:gap-6">
           <Link href="/" className="flex gap-0.5 items-center">
-            <Image src="/assets/talkbook-logo.png" alt="TalkBook" width={42} height={26} />
+            <Image src="/assets/new-logo.png" alt="TalkBook" width={42} height={26} />
             <span className="logo-text">TalkBook</span>
           </Link>
           
           {isSignedIn && (
-            <>
-              <div className="h-6 w-px bg-border hidden md:block" />
+            <div className="flex items-center gap-2 md:gap-4">
+              <div className="h-6 w-px bg-border hidden md:block mx-1" />
+              <ThemeToggle />
               <Link 
                 href="/my-books" 
                 className={cn(
@@ -55,7 +56,7 @@ const Navbar = () => {
                   <div className="absolute -top-1 left-1/2 -translate-x-1/2 border-4 border-transparent border-b-foreground" />
                 </span>
               </Link>
-            </>
+            </div>
           )}
         </div>
         
@@ -83,18 +84,15 @@ const Navbar = () => {
 
           {/* Utils & Auth */}
           <div className="flex gap-4 md:gap-5 items-center pl-4 border-l border-border/50">
-            <ThemeToggle />
             {!isSignedIn && (
-              <SignInButton mode="modal" />
+              <>
+                <ThemeToggle />
+                <SignInButton mode="modal" />
+              </>
             )}
             {isSignedIn && (
               <div className="nav-user-link">
                 <UserButton />
-                {user?.firstName && (
-                  <Link href="/subscriptions" className="nav-user-name">
-                    {user.firstName}
-                  </Link>
-                )}
               </div>
             )}
           </div>

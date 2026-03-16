@@ -55,7 +55,7 @@ export default async function MyBooksPage() {
 
                 <div className="flex-shrink-0">
                     <Link href="/new-book">
-                        <Button className="form-btn py-6 px-8 rounded-full shadow-lg hover:shadow-indigo-500/25 group">
+                        <Button className="form-btn py-6  cursor-pointer px-8 rounded-full shadow-lg hover:shadow-indigo-500/25 group">
                             <Plus className="w-5 h-5 mr-2 group-hover:scale-125 transition-transform" />
                             Add New Book
                         </Button>
@@ -87,7 +87,7 @@ export default async function MyBooksPage() {
                         You haven't uploaded any books yet. Start synthesizing your first PDFs now!
                     </p>
                     <Link href="/new-book">
-                        <Button variant="outline" className="border-indigo-500/50 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-500/10 shadow-lg">
+                        <Button variant="outline" className="border-indigo-500/50 text-indigo-600  cursor-pointer dark:text-indigo-400 hover:bg-indigo-500/10 shadow-lg">
                             Upload a Book
                         </Button>
                     </Link>

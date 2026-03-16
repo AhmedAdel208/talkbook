@@ -42,7 +42,7 @@ const LandingFooter = () => {
                     {/* Brand Section */}
                     <div className="lg:col-span-2">
                         <Link href="/" className="flex gap-2 items-center mb-6">
-                            <Image src="/assets/talkbook-logo.png" alt="TalkBook" width={40} height={24} />
+                            <Image src="/assets/new-logo.png" alt="TalkBook" width={40} height={24} />
                             <span className="text-2xl font-bold tracking-tight text-foreground">TalkBook</span>
                         </Link>
                         <p className="text-muted-foreground text-lg leading-relaxed mb-8 max-w-sm">
