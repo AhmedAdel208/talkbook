@@ -146,7 +146,7 @@ const UploadForm = () => {
         }
     };
 
-    const handleNext = async () => {
+    const handleNextStep1 = async () => {
         // Only validate the fields present in step 1
         const isValid = await form.trigger(['pdfFile', 'coverImage']);
         if (isValid) {
@@ -155,8 +155,17 @@ const UploadForm = () => {
         }
     };
 
-    const handleBack = () => {
-        setStep(1);
+    const handleNextStep2 = async () => {
+        // Validate details
+        const isValid = await form.trigger(['title', 'author', 'category']);
+        if (isValid) {
+            setStep(3);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    };
+
+    const handleBack = (targetStep: number) => {
+        setStep(targetStep);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
@@ -173,22 +182,29 @@ const UploadForm = () => {
                         <div className="absolute left-6 right-6 top-1/2 -z-10 h-1.5 -translate-y-1/2 bg-secondary rounded-full overflow-hidden">
                             <div 
                                 className="h-full bg-indigo-500 transition-all duration-500 ease-in-out"
-                                style={{ width: step === 1 ? '0%' : '100%' }}
+                                style={{ width: step === 1 ? '0%' : (step === 2 ? '50%' : '100%') }}
                             />
                         </div>
                         
-                        <div className="flex flex-col items-center gap-2 bg-card px-2 z-10 transition-transform duration-300 hover:scale-105">
+                        <div className="flex flex-col items-center gap-2 bg-background px-2 z-10 transition-transform duration-300 hover:scale-105">
                             <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold border-4 transition-all duration-300 ${step >= 1 ? 'bg-indigo-500 border-indigo-100 dark:border-indigo-900/50 text-white shadow-lg' : 'bg-background border-border text-muted-foreground'}`}>
                                 1
                             </div>
                             <span className={`text-sm font-bold tracking-wide ${step >= 1 ? 'text-indigo-600 dark:text-indigo-400' : 'text-muted-foreground'}`}>Upload</span>
                         </div>
                         
-                        <div className="flex flex-col items-center gap-2 bg-card px-2 z-10 transition-transform duration-300 hover:scale-105">
+                        <div className="flex flex-col items-center gap-2 bg-background px-2 z-10 transition-transform duration-300 hover:scale-105">
                             <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold border-4 transition-all duration-300 ${step >= 2 ? 'bg-indigo-500 border-indigo-100 dark:border-indigo-900/50 text-white shadow-lg' : 'bg-secondary border-border text-muted-foreground'}`}>
                                 2
                             </div>
                             <span className={`text-sm font-bold tracking-wide ${step >= 2 ? 'text-indigo-600 dark:text-indigo-400' : 'text-muted-foreground'}`}>Details</span>
+                        </div>
+
+                        <div className="flex flex-col items-center gap-2 bg-background px-2 z-10 transition-transform duration-300 hover:scale-105">
+                            <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold border-4 transition-all duration-300 ${step >= 3 ? 'bg-indigo-500 border-indigo-100 dark:border-indigo-900/50 text-white shadow-lg' : 'bg-secondary border-border text-muted-foreground'}`}>
+                                3
+                            </div>
+                            <span className={`text-sm font-bold tracking-wide ${step >= 3 ? 'text-indigo-600 dark:text-indigo-400' : 'text-muted-foreground'}`}>Assistant</span>
                         </div>
                     </div>
                 </div>
@@ -219,7 +235,7 @@ const UploadForm = () => {
                                 disabled={isSubmitting}
                             />
                             
-                            <Button type="button" onClick={handleNext} className="form-btn w-full mt-8 group">
+                            <Button type="button" onClick={handleNextStep1} className="form-btn w-full mt-8 group">
                                 Continue
                                 <svg className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                             </Button>
@@ -251,6 +267,19 @@ const UploadForm = () => {
                                 disabled={isSubmitting}
                             />
 
+                            <div className="flex gap-4 pt-4 mt-8 border-t border-border/50">
+                                <Button type="button" onClick={() => handleBack(1)} variant="outline" className="flex-1 py-6 text-base font-semibold border-2 rounded-xl transition-all hover:bg-secondary disabled:opacity-50" disabled={isSubmitting}>
+                                    Back
+                                </Button>
+                                <Button type="button" onClick={handleNextStep2} className="form-btn flex-2 shadow-lg hover:shadow-indigo-500/25 group" disabled={isSubmitting}>
+                                    Continue
+                                    <svg className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                                </Button>
+                            </div>
+                        </div>
+
+                        {/* --- STEP 3 --- */}
+                        <div className={`space-y-8 transition-all duration-500 ${step === 3 ? 'block opacity-100 translate-x-0' : 'hidden opacity-0 translate-x-4'}`}>
                             <FormField
                                 control={form.control}
                                 name="persona"
@@ -270,7 +299,7 @@ const UploadForm = () => {
                             />
 
                             <div className="flex gap-4 pt-4 mt-8 border-t border-border/50">
-                                <Button type="button" onClick={handleBack} variant="outline" className="flex-1 py-6 text-base font-semibold border-2 rounded-xl transition-all hover:bg-secondary disabled:opacity-50" disabled={isSubmitting}>
+                                <Button type="button" onClick={() => handleBack(2)} variant="outline" className="flex-1 py-6 text-base font-semibold border-2 rounded-xl transition-all hover:bg-secondary disabled:opacity-50" disabled={isSubmitting}>
                                     Back
                                 </Button>
                                 <Button type="submit" className="form-btn flex-2 shadow-lg hover:shadow-indigo-500/25" disabled={isSubmitting}>
