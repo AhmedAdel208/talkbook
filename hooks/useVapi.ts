@@ -83,8 +83,15 @@ export function useVapi(book: IBook) {
     }, []);
 
     // Keep refs in sync with latest values for use in callbacks
-    const maxDurationSeconds = limits?.maxDurationPerSession ? limits.maxDurationPerSession * 60 : (15 * 60);
-    const maxDurationRef = useLatestRef(maxDurationSeconds);
+    const initialDuration = limits?.maxDurationPerSession ? limits.maxDurationPerSession * 60 : (15 * 60);
+    const [activeMaxDuration, setActiveMaxDuration] = useState(initialDuration);
+    
+    // Update activeMaxDuration if limits prop loads asynchronously later
+    useEffect(() => {
+        setActiveMaxDuration(limits?.maxDurationPerSession ? limits.maxDurationPerSession * 60 : (15 * 60));
+    }, [limits?.maxDurationPerSession]);
+
+    const maxDurationRef = useLatestRef(activeMaxDuration);
     const durationRef = useLatestRef(duration);
     const voice = book.persona || DEFAULT_VOICE;
 
@@ -241,7 +248,7 @@ export function useVapi(book: IBook) {
             
             // Sync max duration directly with the server response to match exact pricing plan limits
             if (result.maxDurationMinutes) {
-                maxDurationRef.current = result.maxDurationMinutes * 60;
+                setActiveMaxDuration(result.maxDurationMinutes * 60);
             }
 
             const firstMessage = `Hey, good to meet you. Quick question before we dive in - have you actually read ${book.title} yet, or are we starting fresh?`;
@@ -339,7 +346,7 @@ export function useVapi(book: IBook) {
         stop,
         limitError,
         isBillingError,
-        maxDurationSeconds,
+        maxDurationSeconds: activeMaxDuration,
         clearError,
         // maxDurationSeconds,
         // remainingSeconds,
