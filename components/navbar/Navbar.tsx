@@ -24,32 +24,44 @@ const Navbar = () => {
   const { user, isSignedIn } = useUser();
 
   return (
-    <header className="w-full fixed z-50 bg-background/80 backdrop-blur-md border-b border-border transition-colors duration-300">
+    <header className="fixed top-0 left-0 w-full z-50 bg-background/95 backdrop-blur-md border-b border-border transition-colors duration-300">
       <div className="wrapper navbar-height py-4 flex justify-between items-center">
-        <Link href="/" className="flex gap-0.5 items-center mr-6">
-          <Image src="/assets/talkbook-logo.png" alt="TalkBook" width={42} height={26} />
-          <span className="logo-text">TalkBook</span>
-        </Link>
+        {/* Left Side: Logo + Icon */}
+        <div className="flex items-center gap-4 md:gap-6">
+          <Link href="/" className="flex gap-0.5 items-center">
+            <Image src="/assets/talkbook-logo.png" alt="TalkBook" width={42} height={26} />
+            <span className="logo-text">TalkBook</span>
+          </Link>
+          
+          {isSignedIn && (
+            <>
+              <div className="h-6 w-px bg-border hidden md:block" />
+              <Link 
+                href="/my-books" 
+                className={cn(
+                  "relative group flex items-center justify-center p-2 rounded-xl transition-all duration-300",
+                  pathName === "/my-books" 
+                    ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400" 
+                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                )}
+                aria-label="My Books"
+              >
+                <BookMarked className="w-5 h-5" />
+                
+                {/* Tooltip */}
+                <span className="absolute top-full left-1/2 -translate-x-1/2 mt-3 px-3 py-1.5 bg-foreground text-background text-xs font-semibold rounded-md opacity-0 pointer-events-none group-hover:opacity-100 transition-all duration-200 transform translate-y-1 group-hover:translate-y-0 whitespace-nowrap shadow-xl z-50">
+                  My Books
+                  {/* Tooltip Arrow */}
+                  <div className="absolute -top-1 left-1/2 -translate-x-1/2 border-4 border-transparent border-b-foreground" />
+                </span>
+              </Link>
+            </>
+          )}
+        </div>
         
         <nav className="flex-1 flex justify-end gap-7 md:gap-8 items-center">
           {/* Internal Pages */}
           <div className="hidden md:flex items-center gap-6 mr-4">
-            {isSignedIn && (
-              <Link 
-                href="/my-books" 
-                className={cn(
-                  "relative group flex items-center justify-center transition-colors",
-                  pathName === "/my-books" ? "text-indigo-600 dark:text-indigo-400" : "text-muted-foreground hover:text-indigo-500"
-                )}
-                aria-label="My Books"
-              >
-                <BookMarked className="w-[1.125rem] h-[1.125rem]" />
-                <span className="absolute -bottom-8 bg-black dark:bg-white text-white dark:text-black text-[10px] font-bold px-2 py-0.5 rounded-md opacity-0 group-hover:opacity-100 transition-all scale-95 group-hover:scale-100 whitespace-nowrap pointer-events-none z-50">
-                  My Books
-                </span>
-              </Link>
-            )}
-
             {navItems.map(({ label, href }) => {
               const isActive =
                 pathName === href || (href !== "/" && pathName.startsWith(href));

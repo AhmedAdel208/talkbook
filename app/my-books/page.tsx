@@ -2,7 +2,6 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { getUserBooks } from "@/lib/actions/book.actions";
 import MyBookCard from "@/components/MyBookCard";
-import React from "react";
 import { BookMarked, Plus } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
