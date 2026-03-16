@@ -67,15 +67,35 @@ const FileUploader = <T extends FieldValues>({
                     />
 
                     {isUploaded ? (
-                        <div className="flex flex-col items-center relative w-full px-4">
-                            <p className="upload-dropzone-text line-clamp-1">{(value as File).name}</p>
-                            <button
-                                type="button"
-                                onClick={onRemove}
-                                className="upload-dropzone-remove mt-2"
-                            >
-                                <X className="w-5 h-5" />
-                            </button>
+                        <div className="flex flex-col items-center relative w-full h-full justify-center">
+                            {(value as File).type.startsWith('image/') ? (
+                                <div className="relative w-full h-full flex items-center justify-center p-2">
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img 
+                                        src={URL.createObjectURL(value as File)} 
+                                        alt="Preview" 
+                                        className="h-full w-auto max-h-[160px] object-contain rounded-lg shadow-sm"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={onRemove}
+                                        className="absolute top-2 right-2 p-1.5 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors"
+                                    >
+                                        <X className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="flex flex-col items-center w-full px-4">
+                                    <p className="upload-dropzone-text line-clamp-1">{(value as File).name}</p>
+                                    <button
+                                        type="button"
+                                        onClick={onRemove}
+                                        className="upload-dropzone-remove mt-2"
+                                    >
+                                        <X className="w-5 h-5" />
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     ) : (
                         <>
