@@ -61,13 +61,26 @@ export function useVapi(book: IBook) {
     // Suppress Krisp WASM processor errors on browsers without SIMD support
     useEffect(() => {
         const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
-            if (event.reason && event.reason.toString().includes('WASM_OR_WORKER_NOT_READY')) {
-                console.warn('Suppressed Krisp WASM error:', event.reason);
-                event.preventDefault(); // Prevents the error from bubble up to Next.js overlay
+            const reason = event.reason?.toString?.() || '';
+            if (reason.includes('WASM_OR_WORKER_NOT_READY') || reason.includes('krisp')) {
+                event.preventDefault();
             }
         };
+
+        const handleError = (event: ErrorEvent) => {
+            const msg = event.message || '';
+            if (msg.includes('WASM_OR_WORKER_NOT_READY') || msg.includes('krisp')) {
+                event.preventDefault();
+                return true;
+            }
+        };
+
         window.addEventListener('unhandledrejection', handleUnhandledRejection);
-        return () => window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+        window.addEventListener('error', handleError);
+        return () => {
+            window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+            window.removeEventListener('error', handleError);
+        };
     }, []);
 
     // Keep refs in sync with latest values for use in callbacks

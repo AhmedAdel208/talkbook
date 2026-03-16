@@ -1,9 +1,9 @@
-import HeroSection from "@/components/services/HeroSection";
-import FeaturesSection from "@/components/services/FeaturesSection";
+import HeroSection from "@/services/HeroSection";
+import FeaturesSection from "@/services/FeaturesSection";
 import Link from "next/link";
 import { ArrowRight, BookOpen, Clock, Star } from "lucide-react";
-import LandingFooter from "@/components/services/LandingFooter";
-import FeaturedBooks from "@/components/services/FeaturedBooks";
+import LandingFooter from "@/services/LandingFooter";
+import FeaturedBooks from "@/services/FeaturedBooks";
 
 export const dynamic = 'force-dynamic';
 

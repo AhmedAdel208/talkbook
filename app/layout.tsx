@@ -4,6 +4,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 
 import Navbar from "@/components/navbar/Navbar";
 import { ThemeProvider } from "@/components/theme-provider";
+import GlobalErrorSuppressor from "@/components/GlobalErrorSuppressor";
 import "./globals.css";
 import {Toaster} from "@/components/ui/sonner";
 
@@ -37,6 +38,7 @@ export default function RootLayout({
             className={`${ibmPlexSerif.variable} ${monaSans.variable} relative font-sans antialiased bg-background text-foreground transition-colors duration-100`}
           >
             <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+              <GlobalErrorSuppressor />
               <Navbar />
               {children}
               <Toaster />
