@@ -1,12 +1,24 @@
 # 🎙️ TalkBook: Revolutionary AI-Powered Library
 
-[![Next.js 15](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
+[![Next.js 15](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind--CSS-4-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-Latest-47A248?logo=mongodb)](https://www.mongodb.com/)
 [![Clerk](https://img.shields.io/badge/Clerk-Auth-6C47FF?logo=clerk)](https://clerk.dev/)
 
 **TalkBook** is a state-of-the-art SaaS platform that transforms static PDF books into dynamic, interactive AI voice conversations. Built for the modern researcher, student, and lifelong learner, it bridges the gap between traditional reading and conversational learning.
+
+---
+
+### 📸 Visual Preview
+
+| 🚀 Hero Experience | 📚 Smart Library |
+| :---: | :---: |
+| ![Hero](/public/demo/preview1.webp) | ![Library](/public/demo/preview2.webp) |
+
+| 🎙️ AI Voice Interaction | 💳 Premium Plans |
+| :---: | :---: |
+| ![Voice](/public/demo/preview3.webp) | ![Pricing](/public/demo/preview4.webp) |
 
 ---
 
