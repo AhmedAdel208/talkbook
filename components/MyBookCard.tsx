@@ -74,7 +74,7 @@ const MyBookCard = ({ title, author, coverURL, slug, bookId }: MyBookCardProps) 
                     <button 
                         onClick={handleDelete}
                         disabled={isDeleting}
-                        className="absolute -top-3 -right-3 p-2.5 rounded-full bg-red-500/90 text-white backdrop-blur-md shadow-lg opacity-0 group-hover:opacity-100 -translate-y-2 group-hover:translate-y-0 transition-all duration-300 hover:scale-110 hover:bg-red-600 focus:outline-none z-20 cursor-pointer"
+                        className="absolute -top-3 -right-3 p-2.5 rounded-full bg-red-500/90 text-white backdrop-blur-md shadow-lg transition-all duration-300 hover:scale-110 hover:bg-red-600 focus:outline-none z-20 cursor-pointer"
                         title="Delete Book"
                     >
                         <Trash2 className="w-4 h-4" />

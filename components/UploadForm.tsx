@@ -54,9 +54,10 @@ const UploadForm = () => {
         // PostHog -> Track Book Uploads...
 
         try {
+            // Check if book already exists first
             const existsCheck = await checkBookExists(data.title);
 
-            if(existsCheck.exists && existsCheck.book) {
+            if (existsCheck.exists && existsCheck.book) {
                 toast.info("Book with same title already exists.");
                 form.reset()
                 router.push(`/books/${existsCheck.book.slug}`)
@@ -66,22 +67,24 @@ const UploadForm = () => {
             const fileTitle = data.title.replace(/\s+/g, '-').toLowerCase();
             const pdfFile = data.pdfFile;
 
+            // Step 1: Parse PDF (Heavy client-side work)
             const parsedPDF = await parsePDFFile(pdfFile);
 
-            if(parsedPDF.content.length === 0) {
+            if (parsedPDF.content.length === 0) {
                 toast.error("Failed to parse PDF. Please try again with a different file.");
                 return;
             }
 
+            // Step 2: Upload PDF to Blob
             const uploadedPdfBlob = await upload(fileTitle, pdfFile, {
                 access: 'public',
                 handleUploadUrl: '/api/upload',
                 contentType: 'application/pdf'
             });
 
+            // Step 3: Handle Cover Image
             let coverUrl: string;
-
-            if(data.coverImage) {
+            if (data.coverImage) {
                 const coverFile = data.coverImage;
                 const uploadedCoverBlob = await upload(`${fileTitle}_cover.png`, coverFile, {
                     access: 'public',
@@ -92,7 +95,6 @@ const UploadForm = () => {
             } else {
                 const response = await fetch(parsedPDF.cover)
                 const blob = await response.blob();
-
                 const uploadedCoverBlob = await upload(`${fileTitle}_cover.png`, blob, {
                     access: 'public',
                     handleUploadUrl: '/api/upload',
@@ -101,6 +103,7 @@ const UploadForm = () => {
                 coverUrl = uploadedCoverBlob.url;
             }
 
+            // Step 4: Create Book Entry (Server Action) - This must happen before redirect!
             const book = await createBook({
                 clerkId: userId,
                 title: data.title,
@@ -113,33 +116,32 @@ const UploadForm = () => {
                 fileSize: pdfFile.size,
             });
 
-            if(!book.success) {
+            if (!book.success) {
                 toast.error(book.error as string || "Failed to create book");
-                if (book.isBillingError) {
-                    router.push("/subscriptions");
-                }
+                if (book.isBillingError) router.push("/subscriptions");
                 return;
             }
 
-            if(book.alreadyExists) {
-                toast.info("Book with same title already exists.");
-                form.reset()
-                router.push(`/books/${book.data.slug}`)
-                return;
-            }
+            // START BACKGROUND TIMER ONLY AFTER BOOK IS CREATED
+            // This ensures the user will actually see the book when redirected.
+            const backgroundRedirectTimer = setTimeout(() => {
+                toast.info("Synthesizing in background... This is a large book! We're letting you explore while we finish up.", {
+                    duration: 6000,
+                    id: "background-processing"
+                });
+                router.push('/my-books');
+            }, 3000);
 
-            const segments = await saveBookSegments(book.data._id, userId, parsedPDF.content);
+            // Step 5: Save Segments (Heavy server-side work)
+            await saveBookSegments(book.data._id, userId, parsedPDF.content);
 
-            if(!segments.success) {
-                toast.error("Failed to save book segments");
-                throw new Error("Failed to save book segments");
-            }
-
+            clearTimeout(backgroundRedirectTimer);
+            toast.success("Book synthesized successfully!", { id: "background-processing" });
+            
             form.reset();
-            router.push('/');
+            router.push('/my-books');
         } catch (error) {
             console.error(error);
-
             toast.error("Failed to upload book. Please try again later.");
         } finally {
             setIsSubmitting(false);

@@ -1,27 +1,50 @@
 import HeroSection from "@/services/HeroSection";
-import FeaturesSection from "@/services/FeaturesSection";
 import Link from "next/link";
 import { ArrowRight, BookOpen, Clock, Star } from "lucide-react";
-import LandingFooter from "@/services/LandingFooter";
+import { Suspense } from "react";
+import dynamic from "next/dynamic";
 import FeaturedBooks from "@/services/FeaturedBooks";
 
-export const dynamic = 'force-dynamic';
+// Lazy load non-critical sections that are below the fold
+const FeaturesSection = dynamic(() => import("@/services/FeaturesSection"), {
+    loading: () => <div className="h-96 w-full animate-pulse bg-secondary/20 rounded-3xl mb-24" />
+});
+
+const LandingFooter = dynamic(() => import("@/services/LandingFooter"));
+
+/**
+ * FeaturedBooksSkeleton
+ * A simple placeholder to show while books are loading
+ */
+const FeaturedBooksSkeleton = () => (
+    <section className="max-w-7xl mx-auto px-5 mb-24">
+        <div className="h-10 w-48 bg-secondary/30 rounded-lg mb-10 animate-pulse" />
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+            {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="aspect-3/4 bg-secondary/20 rounded-2xl animate-pulse" />
+            ))}
+        </div>
+    </section>
+);
 
 export default function Home() {
     return (
         <main className="w-full min-h-screen bg-background text-foreground pt-[94px] overflow-hidden transition-colors duration-300">
             {/* Animated background gradient */}
-            <div className="absolute top-0 inset-x-0 h-[500px] w-full bg-gradient-to-b from-primary/10 to-transparent pointer-events-none -z-20" />
+            <div className="absolute top-0 inset-x-0 h-[500px] w-full bg-linear-to-b from-primary/10 to-transparent pointer-events-none -z-20" />
             
             <HeroSection />
 
-            <FeaturedBooks />
+            {/* Suspense allows the hero to render immediately while books are fetched */}
+            <Suspense fallback={<FeaturedBooksSkeleton />}>
+                <FeaturedBooks />
+            </Suspense>
 
             <FeaturesSection />
 
-            {/* Content preview section instead of the full library */}
+            {/* Content preview section */}
             <section className="max-w-7xl px-5 mx-auto w-full mb-24 relative z-10">
-                <div className="bg-card/40 backdrop-blur-md border border-border rounded-3xl p-8 md:p-12 shadow-[var(--shadow-soft-md)]">
+                <div className="bg-card/40 backdrop-blur-md border border-border rounded-3xl p-8 md:p-12 shadow-(--shadow-soft-md)">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-8 mb-12">
                         <div className="max-w-2xl text-center md:text-left">
                             <h2 className="text-3xl md:text-5xl font-bold mb-4">

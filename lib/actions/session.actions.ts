@@ -3,7 +3,7 @@
 import {EndSessionResult, StartSessionResult} from "@/types";
 import {connectToDatabase} from "@/database/mongoose";
 import VoiceSession from "@/database/models/voice-session.model";
-import {getCurrentBillingPeriodStart} from "@/lib/subscription-constants";
+import { revalidatePath } from "next/cache";
 
 export const startVoiceSession = async (clerkId: string, bookId: string): Promise<StartSessionResult> => {
     try {
@@ -23,7 +23,6 @@ export const startVoiceSession = async (clerkId: string, bookId: string): Promis
         });
 
         if (sessionCount >= limits.maxSessionsPerMonth) {
-            const { revalidatePath } = await import("next/cache");
             revalidatePath("/");
 
             return {

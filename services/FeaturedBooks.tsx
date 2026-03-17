@@ -5,13 +5,14 @@ import Link from 'next/link';
 import { TrendingUp, ArrowRight } from 'lucide-react';
 
 const FeaturedBooks = async () => {
-    const results = await getAllBooks();
+    // Only fetch 4 books for the home page instead of the entire library
+    const results = await getAllBooks(undefined, 4);
     
     if (!results.success) {
         console.error("FeaturedBooks: Failed to fetch books", results.error);
     }
 
-    const books = results.success ? (results.data?.slice(0, 4) ?? []) : [];
+    const books = results.success ? (results.data ?? []) : [];
     console.log(books)
 
     if (books.length === 0) {

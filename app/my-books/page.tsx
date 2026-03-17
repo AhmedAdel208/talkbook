@@ -5,8 +5,67 @@ import MyBookCard from "@/components/MyBookCard";
 import { BookMarked, Plus } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Suspense } from "react";
 
-export const dynamic = 'force-dynamic';
+const UserBookList = async ({ userId }: { userId: string }) => {
+    const { data: books, success, error } = await getUserBooks(userId);
+
+    if (!success) {
+        return (
+            <div className="py-10 min-h-[40vh] flex items-center justify-center">
+                <div className="text-center space-y-4">
+                    <h2 className="text-2xl font-bold text-red-500">Error Loading Your Books</h2>
+                    <p className="text-muted-foreground">{String(error)}</p>
+                </div>
+            </div>
+        );
+    }
+
+    const myBooks = books && Array.isArray(books) ? books : [];
+
+    if (myBooks.length === 0) {
+        return (
+            <div className="flex flex-col items-center justify-center py-20 bg-card/30 rounded-3xl border border-dashed border-border text-center">
+                <div className="p-6 bg-secondary/50 rounded-full mb-6">
+                    <BookMarked className="w-12 h-12 text-muted-foreground" />
+                </div>
+                <h2 className="text-2xl font-bold text-foreground mb-2">No books found in your library</h2>
+                <p className="text-muted-foreground mb-8 max-w-md">
+                    You haven't uploaded any books yet. Start synthesizing your first PDFs now!
+                </p>
+                <Link href="/new-book">
+                    <Button variant="outline" className="border-indigo-500/50 text-indigo-600 cursor-pointer dark:text-indigo-400 hover:bg-indigo-500/10 shadow-lg">
+                        Upload a Book
+                    </Button>
+                </Link>
+            </div>
+        );
+    }
+
+    return (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 md:gap-8">
+            {myBooks.map((book: any) => (
+                <div key={book._id} className="animate-fade-in-up" style={{ animationFillMode: 'both' }}>
+                    <MyBookCard
+                        bookId={book._id}
+                        slug={book.slug}
+                        title={book.title}
+                        author={book.author}
+                        coverURL={book.coverURL}
+                    />
+                </div>
+            ))}
+        </div>
+    );
+};
+
+const UserBookListSkeleton = () => (
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 md:gap-8">
+        {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="aspect-3/4 bg-secondary/20 rounded-2xl animate-pulse" />
+        ))}
+    </div>
+);
 
 export default async function MyBooksPage() {
     const { userId } = await auth();
@@ -14,22 +73,6 @@ export default async function MyBooksPage() {
     if (!userId) {
         redirect('/');
     }
-
-    const { data: books, success, error } = await getUserBooks(userId);
-
-    if (!success) {
-        return (
-            <div className="wrapper py-10 mt-[80px] min-h-[70vh] flex items-center justify-center">
-                <div className="text-center space-y-4">
-                    <h2 className="text-2xl font-bold text-red-500">Error Loading Your Books</h2>
-                    <p className="text-muted-foreground">{String(error)}</p>
-                </div>
-            </div>
-        )
-    }
-
-    // Safely structure data
-    const myBooks = books && Array.isArray(books) ? books : [];
 
     return (
         <section className="wrapper py-10 mt-[80px] min-h-screen relative overflow-hidden">
@@ -53,9 +96,9 @@ export default async function MyBooksPage() {
                     </p>
                 </div>
 
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                     <Link href="/new-book">
-                        <Button className="form-btn py-6  cursor-pointer px-8 rounded-full shadow-lg hover:shadow-indigo-500/25 group">
+                        <Button className="form-btn py-6 cursor-pointer px-8 rounded-full shadow-lg hover:shadow-indigo-500/25 group">
                             <Plus className="w-5 h-5 mr-2 group-hover:scale-125 transition-transform" />
                             Add New Book
                         </Button>
@@ -63,36 +106,9 @@ export default async function MyBooksPage() {
                 </div>
             </header>
 
-            {myBooks.length > 0 ? (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 md:gap-8">
-                    {myBooks.map((book: any) => (
-                        <div key={book._id} className="animate-fade-in-up" style={{ animationFillMode: 'both' }}>
-                            <MyBookCard
-                                bookId={book._id}
-                                slug={book.slug}
-                                title={book.title}
-                                author={book.author}
-                                coverURL={book.coverURL}
-                            />
-                        </div>
-                    ))}
-                </div>
-            ) : (
-                <div className="flex flex-col items-center justify-center py-20 bg-card/30 rounded-3xl border border-dashed border-border text-center">
-                    <div className="p-6 bg-secondary/50 rounded-full mb-6">
-                        <BookMarked className="w-12 h-12 text-muted-foreground" />
-                    </div>
-                    <h2 className="text-2xl font-bold text-foreground mb-2">No books found in your library</h2>
-                    <p className="text-muted-foreground mb-8 max-w-md">
-                        You haven't uploaded any books yet. Start synthesizing your first PDFs now!
-                    </p>
-                    <Link href="/new-book">
-                        <Button variant="outline" className="border-indigo-500/50 text-indigo-600  cursor-pointer dark:text-indigo-400 hover:bg-indigo-500/10 shadow-lg">
-                            Upload a Book
-                        </Button>
-                    </Link>
-                </div>
-            )}
+            <Suspense fallback={<UserBookListSkeleton />}>
+                <UserBookList userId={userId} />
+            </Suspense>
         </section>
     );
 }

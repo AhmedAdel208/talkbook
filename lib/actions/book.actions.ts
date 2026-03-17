@@ -7,38 +7,51 @@ import Book from "@/database/models/book.model";
 import BookSegment from "@/database/models/book-segment.model";
 import mongoose from "mongoose";
 import {getUserPlan} from "@/lib/subscription.server";
+import { unstable_cache, revalidateTag, revalidatePath } from "next/cache";
 
-export const getAllBooks = async (search?: string) => {
-    try {
-        await connectToDatabase();
+// Cache for all books list
+export const getAllBooks = async (search?: string, limit?: number) => 
+    unstable_cache(
+        async (search?: string, limit?: number) => {
+            try {
+                await connectToDatabase();
 
-        let query = {};
+                let query = {};
 
-        if (search) {
-            const escapedSearch = escapeRegex(search);
-            const regex = new RegExp(escapedSearch, 'i');
-            query = {
-                $or: [
-                    { title: { $regex: regex } },
-                    { author: { $regex: regex } },
-                    { category: { $regex: regex } },
-                ]
-            };
-        }
+                if (search) {
+                    const escapedSearch = escapeRegex(search);
+                    const regex = new RegExp(escapedSearch, 'i');
+                    query = {
+                        $or: [
+                            { title: { $regex: regex } },
+                            { author: { $regex: regex } },
+                            { category: { $regex: regex } },
+                        ]
+                    };
+                }
 
-        const books = await Book.find(query).sort({ createdAt: -1 }).lean();
+                let mongoQuery = Book.find(query).sort({ createdAt: -1 });
+                
+                if (limit) {
+                    mongoQuery = mongoQuery.limit(limit);
+                }
 
-        return {
-            success: true,
-            data: serializeData(books)
-        }
-    } catch (e) {
-        console.error('Error connecting to database', e);
-        return {
-            success: false, error: e
-        }
-    }
-}
+                const books = await mongoQuery.lean();
+
+                return {
+                    success: true,
+                    data: serializeData(books)
+                }
+            } catch (e) {
+                console.error('Error connecting to database', e);
+                return {
+                    success: false, error: e
+                }
+            }
+        },
+        [`all-books-${search || 'none'}-${limit || 'all'}`],
+        { tags: ["all-books"], revalidate: 3600 } // Cache for 1 hour or until manual revalidation
+    )(search, limit);
 
 export const checkBookExists = async (title: string) => {
     try {
@@ -99,7 +112,6 @@ export const createBook = async (data: CreateBook) => {
         const bookCount = await Book.countDocuments({ clerkId: userId });
 
         if (bookCount >= limits.maxBooks) {
-            const { revalidatePath } = await import("next/cache");
             revalidatePath("/");
 
             return {
@@ -110,6 +122,13 @@ export const createBook = async (data: CreateBook) => {
         }
 
         const book = await Book.create({...data, clerkId: userId, slug, totalSegments: 0});
+
+        // Revalidate cache tags and paths to ensure UI updates immediately
+        revalidateTag("all-books", { expire: 0 });
+        revalidateTag(`user-books-${userId}`, { expire: 0 });
+        revalidatePath("/");
+        revalidatePath("/library");
+        revalidatePath("/my-books");
 
         return {
             success: true,
@@ -125,27 +144,33 @@ export const createBook = async (data: CreateBook) => {
     }
 }
 
-export const getBookBySlug = async (slug: string) => {
-    try {
-        await connectToDatabase();
+// Cache for individual book pages
+export const getBookBySlug = async (slug: string) => 
+    unstable_cache(
+        async (slug: string) => {
+            try {
+                await connectToDatabase();
 
-        const book = await Book.findOne({ slug }).lean();
+                const book = await Book.findOne({ slug }).lean();
 
-        if (!book) {
-            return { success: false, error: 'Book not found' };
-        }
+                if (!book) {
+                    return { success: false, error: 'Book not found' };
+                }
 
-        return {
-            success: true,
-            data: serializeData(book)
-        }
-    } catch (e) {
-        console.error('Error fetching book by slug', e);
-        return {
-            success: false, error: e
-        }
-    }
-}
+                return {
+                    success: true,
+                    data: serializeData(book)
+                }
+            } catch (e) {
+                console.error('Error fetching book by slug', e);
+                return {
+                    success: false, error: e
+                }
+            }
+        },
+        [`book-${slug}`],
+        { tags: [`book-${slug}`, "all-books"], revalidate: 3600 }
+    )(slug);
 
 export const saveBookSegments = async (bookId: string, clerkId: string, segments: TextSegment[]) => {
     try {
@@ -233,23 +258,28 @@ export const searchBookSegments = async (bookId: string, query: string, limit: n
     }
 };
 
-export const getUserBooks = async (clerkId: string) => {
-    try {
-        await connectToDatabase();
+export const getUserBooks = async (clerkId: string) => 
+    unstable_cache(
+        async (clerkId: string) => {
+            try {
+                await connectToDatabase();
 
-        const books = await Book.find({ clerkId }).sort({ createdAt: -1 }).lean();
+                const books = await Book.find({ clerkId }).sort({ createdAt: -1 }).lean();
 
-        return {
-            success: true,
-            data: serializeData(books)
-        }
-    } catch (e) {
-        console.error('Error fetching user books', e);
-        return {
-            success: false, error: e
-        }
-    }
-}
+                return {
+                    success: true,
+                    data: serializeData(books)
+                }
+            } catch (e) {
+                console.error('Error fetching user books', e);
+                return {
+                    success: false, error: e
+                }
+            }
+        },
+        [`user-books-${clerkId}`],
+        { tags: [`user-books-${clerkId}`, "all-books"], revalidate: 3600 }
+    )(clerkId);
 
 export const deleteBook = async (bookId: string, clerkId: string) => {
     try {
@@ -271,7 +301,6 @@ export const deleteBook = async (bookId: string, clerkId: string) => {
         await BookSegment.deleteMany({ bookId });
 
         // Optional: Next/Cache revalidate
-        const { revalidatePath } = await import("next/cache");
         revalidatePath("/library");
         revalidatePath("/my-books");
         revalidatePath("/");
@@ -279,6 +308,14 @@ export const deleteBook = async (bookId: string, clerkId: string) => {
         // Note: Currently we are not physically deleting the PDF/Cover files from Vercel Blob here 
         // to simplify this step, but in production you'd want to call `del(book.fileBlobKey)` from @vercel/blob.
         
+        // Revalidate cache tags after deletion
+        revalidateTag("all-books", { expire: 0 });
+        revalidateTag(`user-books-${clerkId}`, { expire: 0 });
+        revalidateTag(`book-${book.slug}`, { expire: 0 });
+        revalidatePath("/library");
+        revalidatePath("/my-books");
+        revalidatePath("/");
+
         return {
             success: true,
         }
